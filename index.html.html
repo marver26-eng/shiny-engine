@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Present Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f7ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="game"></div>
+  </div>
+
+  <script>
+    const questionBank = [
+      { question: "She ___ (watch) TV every evening.", options: ["watch", "watches", "is watching", "watched"], answer: "watches" },
+      { question: "They ___ (not / play) football on Mondays.", options: ["don’t play", "doesn’t play", "not play", "aren’t playing"], answer: "don’t play" },
+      { question: "He ___ (go) to school by bus.", options: ["go", "goes", "going", "went"], answer: "goes" },
+      { question: "I ___ (not / like) pizza.", options: ["don’t like", "doesn’t like", "not like", "am not like"], answer: "don’t like" },
+      { question: "We ___ (get up) at 7 o’clock.", options: ["gets up", "get up", "getting up", "got up"], answer: "get up" },
+      { question: "She ___ (not / eat) meat.", options: ["don’t eat", "doesn’t eat", "isn’t eat", "not eat"], answer: "doesn’t eat" },
+      { question: "I ___ (always / drink) coffee in the morning.", options: ["always drinks", "always drink", "drink always", "am drinking"], answer: "always drink" },
+      { question: "He ___ (never / go) to the gym.", options: ["never go", "never goes", "go never", "goes never"], answer: "never goes" },
+      { question: "They ___ (often / play) tennis at the weekend.", options: ["often plays", "often play", "play often", "are often playing"], answer: "often play" },
+      { question: "We ___ (usually / watch) TV after dinner.", options: ["usually watches", "usually watch", "watch usually", "are usually watching"], answer: "usually watch" },
+      { question: "She ___ (sometimes / read) books in the evening.", options: ["sometimes read", "sometimes reads", "read sometimes", "is sometimes reading"], answer: "sometimes reads" },
+      { question: "I ___ (never / eat) fast food.", options: ["never eat", "never eats", "eat never", "am never eating"], answer: "never eat" },
+      { question: "Does he ___ (play) football?", options: ["play", "plays", "playing", "played"], answer: "play" },
+      { question: "___ you (like) ice cream?", options: ["Do", "Does", "Are", "Is"], answer: "Do" },
+      { question: "She ___ (do) her homework every afternoon.", options: ["do", "does", "doing", "done"], answer: "does" },
+      { question: "We ___ (not / watch) TV in the morning.", options: ["don’t watch", "doesn’t watch", "not watch", "aren’t watch"], answer: "don’t watch" },
+      { question: "My father ___ (always / read) the newspaper.", options: ["always reads", "always read", "read always", "is always reading"], answer: "always reads" },
+      { question: "They ___ (never / drink) milk.", options: ["never drink", "never drinks", "drink never", "are never drinking"], answer: "never drink" },
+      { question: "He ___ (usually / go) to school on foot.", options: ["usually go", "usually goes", "go usually", "is usually going"], answer: "usually goes" },
+      { question: "We ___ (often / eat) pasta for lunch.", options: ["often eat", "often eats", "eat often", "are often eating"], answer: "often eat" },
+      { question: "She ___ (not / watch) cartoons.", options: ["don’t watch", "doesn’t watch", "isn’t watch", "not watch"], answer: "doesn’t watch" },
+      { question: "They ___ (sometimes / visit) their grandparents.", options: ["sometimes visit", "sometimes visits", "visit sometimes", "are sometimes visiting"], answer: "sometimes visit" },
+      { question: "He ___ (usually / eat) breakfast at 8.", options: ["usually eat", "usually eats", "eat usually", "is usually eating"], answer: "usually eats" },
+      { question: "We ___ (not / go) to school on Sunday.", options: ["don’t go", "doesn’t go", "aren’t go", "not go"], answer: "don’t go" },
+      { question: "I ___ (always / do) my homework.", options: ["always does", "always do", "do always", "am always doing"], answer: "always do" },
+      { question: "She ___ (often / play) the piano.", options: ["often play", "often plays", "plays often", "is often playing"], answer: "often plays" },
+      { question: "They ___ (never / watch) TV in the morning.", options: ["never watch", "never watches", "watch never", "are never watching"], answer: "never watch" },
+      { question: "He ___ (sometimes / help) his mother.", options: ["sometimes help", "sometimes helps", "help sometimes", "is sometimes helping"], answer: "sometimes helps" },
+      { question: "We ___ (usually / go) shopping on Saturday.", options: ["usually go", "usually goes", "go usually", "are usually going"], answer: "usually go" },
+      { question: "My sister ___ (not / eat) vegetables.", options: ["don’t eat", "doesn’t eat", "isn’t eat", "not eat"], answer: "doesn’t eat" }
+    ];
+
+    // Select 20 random questions from the bank
+    let questions = questionBank.sort(() => 0.5 - Math.random()).slice(0, 20);
+
+    let current = 0;
+    let score = 0;
+
+    const gameDiv = document.getElementById("game");
+
+    function showQuestion() {
+      const q = questions[current];
+      gameDiv.innerHTML = `
+        <h2>Question ${current + 1} of ${questions.length}</h2>
+        <p>${q.question}</p>
+        <div class="options">
+          ${q.options
+            .map(
+              (opt, i) => `<button onclick=\"handleAnswer('${opt}')\">${opt}</button>`
+            )
+            .join("")}
+        </div>
+      `;
+    }
+
+    function handleAnswer(option) {
+      if (option === questions[current].answer) {
+        score++;
+      }
+      if (current + 1 < questions.length) {
+        current++;
+        showQuestion();
+      } else {
+        finishGame();
+      }
+    }
+
+    function finishGame() {
+      gameDiv.innerHTML = `
+        <div class="result">
+          <h2>Game Finished!</h2>
+          <p>Your score: ${score} / ${questions.length}</p>
+          <button onclick=\"resetGame()\">Play Again</button>
+        </div>
+      `;
+    }
+
+    function resetGame() {
+      current = 0;
+      score = 0;
+      questions = questionBank.sort(() => 0.5 - Math.random()).slice(0, 20);
+      showQuestion();
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
